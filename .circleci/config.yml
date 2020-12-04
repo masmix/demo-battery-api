@@ -1,13 +1,19 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine. See: https://circleci.com/docs/2.0/configuration-reference
+# see https://github.com/cypress-io/circleci-orb
 version: 2.1
-# Use a package of configuration called an orb.
 orbs:
-  # Declare a dependency on the welcome-orb
-  welcome: circleci/welcome-orb@0.4.1
-# Orchestrate or schedule a set of jobs
+  cypress: cypress-io/cypress@1
 workflows:
-  # Name the workflow "welcome"
-  welcome:
-    # Run the welcome/run job in its own container
+  build:
     jobs:
-      - welcome/run
+      - cypress/run:
+          # we need to start the web application
+          start: npm start
+          # there are no jobs to follow this one
+          # so no need to save the workspace files (saves time)
+          no-workspace: true
+          # store the created coverage report folder
+          # you can click on it in the CircleCI UI
+          # to see live static HTML site
+          post-steps:
+            - store_artifacts:
+                path: coverage
